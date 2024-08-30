@@ -31,6 +31,7 @@ struct Size {
     int cols = 0;
 
     bool operator==(Size rhs) const;
+    bool operator<(Size rhs) const;
 };
 
 // Описывает ошибки, которые могут возникнуть при вычислении формулы.
@@ -39,7 +40,7 @@ public:
     enum class Category {
         Ref,    // ссылка на ячейку с некорректной позицией
         Value,  // ячейка не может быть трактована как число
-        Div0,  // в результате вычисления возникло деление на ноль
+        Arithmetic,  // в результате вычисления возникло деление на ноль
     };
 
     FormulaError(Category category);
@@ -55,6 +56,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& output, FormulaError fe);
+std::ostream& operator<<(std::ostream& output, FormulaError::Category fe);
 
 // Исключение, выбрасываемое при попытке передать в метод некорректную позицию
 class InvalidPositionException : public std::out_of_range {
@@ -98,6 +100,8 @@ public:
     // ячеек. В случае текстовой ячейки список пуст.
     virtual std::vector<Position> GetReferencedCells() const = 0;
 };
+
+std::ostream& operator<<(std::ostream& out, const CellInterface::Value& value);
 
 inline constexpr char FORMULA_SIGN = '=';
 inline constexpr char ESCAPE_SIGN = '\'';
